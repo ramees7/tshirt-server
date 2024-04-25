@@ -1,10 +1,9 @@
 const admins = require('../Models/adminSchema')
 const users = require('../Models/userSchema')
 const jwt = require('jsonwebtoken')
-const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN)
 
 
-let OTP, verify, user
+let OTP, verify, user,message
 exports.userRegister = async (req, res) => {
     try {
         const { username, email, phone, password, confirmpassword } = req.body
@@ -19,49 +18,15 @@ exports.userRegister = async (req, res) => {
                 const newUser = new users({ username, email, phone, password, confirmpassword })
                 await newUser.save()
                 res.status(200).json(newUser)
-
-                // let digits = '0123456789'
-                // OTP = ""
-                // for (let i = 0; i < 6; i++) {
-                //     OTP += digits[Math.floor(Math.random() * 10)]
-                // }
-                // console.log(OTP);
-                // client.verify.v2.services("VA1a4d87b4027b3243ec4bde829c56eda8")
-                //     .verifications
-                    // .create({ to: '+919207424420', channel: 'sms' })
-                    // .create({
-                    //     body: `Your T-Hub Registration Verification for User ${username} is ${OTP}`,
-                    //     // from: "+919207424420", // Your Twilio phone number
-                    //     to: '+919207424420',
-                    //     channel: "sms"
-                    // })
-                    // .then(verification => verify = verification.sid)
-                // console.log(verify);
-                //  client.verify.v2.services("VA1a4d87b4027b3243ec4bde829c56eda8")
-                //  verifications
-                // .create({
-                //     body: `Your T-Hub Registration Verification for User ${username} is ${OTP}`,
-                //     // from: "+919207424420", // Your Twilio phone number
-                //     to: '+919207424420',
-                //     channel: "sms"
-                // })
-                // res.status(200).json({ message: 'Verification code sent successfully' });
-                // client.messages.create({
-
-                //         body: `Your T-Hub Registration Verification for User ${username} is ${OTP}`,
-                //         MessagingServiceSid:'VA1a4d87b4027b3243ec4bde829c56eda8',
-                //         to:"+919207424420",
-                //     })
-                // .then(()=>res.status(200).json("message sent"))
             }
             else {
-                res.status(402).json("Password Doesnt Match")
+                res.status(402).json("Password Doesnt Match" )
             }
 
         }
     }
     catch (err) {
-        res.status(401).json(err + " fggf")
+        res.status(401).json(err )
     }
 }
 
@@ -113,5 +78,47 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         res.status(406).json(err)
+    }
+}
+
+exports.userFind=async(req,res)=>{
+    console.log(req.payload);
+    try{
+        const result=await users.findOne({_id:req.payload})
+        res.status(200).json(result)
+        console.log(result)
+    }
+    catch (err) {
+        res.status(401).json(err)
+        console.log(err);
+    }
+}
+
+
+exports.updateUser = async (req, res) => {
+    try {
+        const { username, email, phone, password, confirmpassword, firstname, lastname, gender, address, street, pincode } = req.body
+        const { id } = req.params
+        const updated_image = req.file ? req.file.filename : req.body.user_image
+        console.log("inside the update profile");
+        const result = await users.updateOne({ _id: id }, { username, email, password, confirmpassword, phone, firstname, lastname, gender, address, street, pincode, user_image: updated_image })
+        res.status(200).json(result)
+        console.log(result);
+    }
+    catch (err) {
+        res.status(401).json(err)
+    }
+}
+
+exports.deletUser=async(req,res)=>{
+    try{
+        console.log("Inside Delete User")
+        const _id=req.payload
+        const result=await users.deleteOne({_id})
+        res.status(200).json(result)
+        console.log(result)
+    }
+    catch (err) {
+        res.status(401).json(err)
     }
 }
