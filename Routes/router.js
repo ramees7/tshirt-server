@@ -15,7 +15,7 @@ const router=new express.Router()
 
 router.post('/registeradmin',adminController.adminRegister)
 router.post('/registeruser',userController.userRegister)
-router.post('/registeruserotp',userController.userRegisterOtp)
+// router.post('/registeruserotp',userController.userRegisterOtp)
 router.post('/login',userController.login)
 router.get('/userfind',jwtMiddleware,userController.userFind)
 router.put('/user/updateprofile/:id',jwtMiddleware,multerConfig.single('user_image'),userController.updateUser)

@@ -3,7 +3,6 @@ const users = require('../Models/userSchema')
 const jwt = require('jsonwebtoken')
 
 
-let OTP, verify, user,message
 exports.userRegister = async (req, res) => {
     try {
         const { username, email, phone, password, confirmpassword } = req.body
@@ -30,22 +29,22 @@ exports.userRegister = async (req, res) => {
     }
 }
 
-exports.userRegisterOtp = async (res, req) => {
-    console.log(user);
-    try {
-        const { otp } = req.body
-        if (otp != OTP) {
-            res.status(401).json("Incorrect OTP")
-        }
-        else {
-            user = await users.save()
-            res.status(200).json(user)
-        }
-    }
-    catch (err) {
-        res.status(401).json(err)
-    }
-}
+// exports.userRegisterOtp = async (res, req) => {
+//     console.log(user);
+//     try {
+//         const { otp } = req.body
+//         if (otp != OTP) {
+//             res.status(401).json("Incorrect OTP")
+//         }
+//         else {
+//             user = await users.save()
+//             res.status(200).json(user)
+//         }
+//     }
+//     catch (err) {
+//         res.status(401).json(err)
+//     }
+// }
 
 exports.login = async (req, res) => {
     try {
